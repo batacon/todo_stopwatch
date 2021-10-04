@@ -88,7 +88,7 @@ export default class Index extends Vue {
 .todo-list-item {
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 12px;
   border-bottom: 1px solid #eee;
 
   & .todo-name-container {
@@ -103,7 +103,7 @@ export default class Index extends Vue {
   }
 
   & .todo-name {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
   }
 

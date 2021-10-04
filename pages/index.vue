@@ -1,6 +1,19 @@
 <template>
   <div class="todo-stopwatch">
-    <h1>Todo Stopwatch</h1>
+    <h1>
+      <button v-show="!isEditingHeading" @click="startEditingHeading">
+        {{ heading }}
+      </button>
+      <input
+        v-show="isEditingHeading"
+        id="heading"
+        v-model="heading"
+        type="text"
+        required
+        @keydown.enter="endEditingHeading"
+        @blur="endEditingHeading"
+      />
+    </h1>
     <ul class="todo-list">
       <todo-list-item
         v-for="todo in todos"
@@ -34,6 +47,8 @@ import { todoRepository } from '~/repository/TodoRepository'
 
 @Component
 export default class TodoPage extends Vue {
+  private heading = 'Todo Stopwatch'
+  private isEditingHeading = false
   private newTodoName = ''
   private timer: any = undefined
   private todos: Todo[] = []
@@ -54,6 +69,17 @@ export default class TodoPage extends Vue {
 
   beforeDestroy() {
     removeEventListener('beforeunload', this.saveTodos)
+  }
+
+  startEditingHeading() {
+    this.isEditingHeading = true
+    this.$nextTick(() => {
+      document.getElementById('heading')!.focus()
+    })
+  }
+
+  endEditingHeading() {
+    this.isEditingHeading = false
   }
 
   changeTodoName(todoId: number, newName: string) {
