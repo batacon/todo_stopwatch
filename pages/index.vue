@@ -1,102 +1,37 @@
 <template>
-  <div class="todo-stopwatch">
-    <h1>
-      <button v-show="!isEditingHeading" @click="startEditingHeading">
-        {{ heading }}
-      </button>
-      <input
-        v-show="isEditingHeading"
-        id="heading"
-        v-model="heading"
-        type="text"
-        required
-        @keydown.enter="endEditingHeading"
-        @blur="endEditingHeading"
-      />
-    </h1>
+  <div class="issue-list">
+    <h1>イシューリスト</h1>
     <ul class="todo-list">
-      <todo-list-item
-        v-for="todo in todos"
-        :key="todo.id"
-        :todo="todo"
-        @toggle-done="toggleDone"
-        @start-timer="handleStartTimerButton"
-        @stop-timer="stopTimer"
-        @remove-todo="removeTodo"
-        @change-todo-name="changeTodoName"
-        @change-estimate-minutes="changeEstimateMinutes"
-      />
+      {{
+        issues
+      }}
     </ul>
-    <form class="todo-form" @submit.prevent="addNewTodo">
-      <input
-        ref="newTodo"
-        v-model="newTodoName"
-        type="text"
-        placeholder="Add new todo"
-        required
-      />
-      <button type="submit">追加</button>
-    </form>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { Todo } from '~/components/types'
+import { Issue, Todo } from '~/components/types'
 import { todoRepository } from '~/repository/TodoRepository'
 
 @Component
 export default class TodoPage extends Vue {
-  private heading = 'Todo Stopwatch'
-  private isEditingHeading = false
-  private newTodoName = ''
-  private timer: any = undefined
-  private todos: Todo[] = []
-
-  get runningTodo(): Todo | undefined {
-    return this.todos.find((todo) => todo.isTimerRunning) || undefined
-  }
+  private newIssueTitle = ''
+  private issues: Issue[] = []
 
   mounted() {
-    ;(this.$refs.newTodo as HTMLElement).focus()
-    this.todos = todoRepository.load()
-    addEventListener('beforeunload', this.saveTodos)
-    const runningTodo = this.todos.find((todo) => todo.isTimerRunning)
-    if (runningTodo) {
-      this.startTimer(runningTodo)
-    }
+    // TODO: storeからissuesを取得してdataに設定する
+    //
   }
 
-  beforeDestroy() {
-    removeEventListener('beforeunload', this.saveTodos)
-  }
-
-  startEditingHeading() {
-    this.isEditingHeading = true
-    this.$nextTick(() => {
-      document.getElementById('heading')!.focus()
-    })
-  }
-
-  endEditingHeading() {
-    this.isEditingHeading = false
-  }
-
-  changeTodoName(todoId: number, newName: string) {
+  changeIssueTitle(todoId: number, newName: string) {
     const todo = this.todos.find((todo) => todo.id === todoId)
     if (todo) {
       todo.name = newName
     }
   }
 
-  changeEstimateMinutes(todoId: number, newEstimateMinutes: number) {
-    const todo = this.todos.find((todo) => todo.id === todoId)
-    if (todo) {
-      todo.estimateMinutes = newEstimateMinutes
-    }
-  }
-
-  addNewTodo() {
+  addNewIssue() {
     const lastTodo = this.todos[this.todos.length - 1]
     const id = lastTodo ? lastTodo.id + 1 : 1
     const newTodo = {

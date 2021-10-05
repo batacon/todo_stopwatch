@@ -7,3 +7,11 @@ export interface Todo {
   isTimerRunning: boolean
   memo: string
 }
+
+export interface Issue {
+  id: number
+  title: string
+  description: string
+  isDone: boolean
+  todos: Todo[]
+}
